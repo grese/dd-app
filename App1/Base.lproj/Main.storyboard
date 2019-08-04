@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="pZt-Gh-wCO">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="pZt-Gh-wCO">
     <device id="retina6_1" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -41,6 +41,14 @@
                                     <action selector="gotItButtonTapped" destination="pZt-Gh-wCO" eventType="touchUpInside" id="3XR-Dn-1jY"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2og-Xj-WBz">
+                                <rect key="frame" x="157" y="691" width="100" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="View Analytics"/>
+                                <connections>
+                                    <segue destination="tCu-rq-3xe" kind="presentation" id="4kq-fF-yvu"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -68,11 +76,52 @@
                         <outlet property="gotItButton" destination="IZm-DU-jRX" id="b0E-4L-fpt"/>
                         <outlet property="messageLabel" destination="r1j-7Z-x4V" id="BRf-Ac-6BM"/>
                         <outlet property="statusImage" destination="3sH-54-9x7" id="VgS-Bb-xLU"/>
+                        <outlet property="viewAnalyticsButton" destination="2og-Xj-WBz" id="2WM-qQ-IP4"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HQg-vy-ejI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="886.95652173913049" y="114.50892857142857"/>
+        </scene>
+        <!--Analytics View Controller-->
+        <scene sceneID="fC3-YP-uM3">
+            <objects>
+                <viewController title="Analytics View Controller" id="tCu-rq-3xe" customClass="AnalyticsViewController" customModule="App1" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="axy-wl-R8r">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="v25-Iy-ykv" userLabel="Line Chart" customClass="BarChartView" customModule="Charts">
+                                <rect key="frame" x="20" y="216" width="374" height="474"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fv2-aM-aXS">
+                                <rect key="frame" x="187.5" y="710" width="39" height="30"/>
+                                <state key="normal" title="Close"/>
+                                <connections>
+                                    <action selector="btnCloseClicked:" destination="tCu-rq-3xe" eventType="touchUpInside" id="qDj-I8-D0I"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="v25-Iy-ykv" firstAttribute="centerY" secondItem="pPC-6D-ZuK" secondAttribute="centerY" id="6vT-kQ-cAA"/>
+                            <constraint firstItem="fv2-aM-aXS" firstAttribute="centerX" secondItem="v25-Iy-ykv" secondAttribute="centerX" id="aVm-g9-qA4"/>
+                            <constraint firstItem="v25-Iy-ykv" firstAttribute="centerX" secondItem="pPC-6D-ZuK" secondAttribute="centerX" id="deO-CC-vLy"/>
+                            <constraint firstItem="v25-Iy-ykv" firstAttribute="top" secondItem="pPC-6D-ZuK" secondAttribute="top" constant="172" id="neB-0a-bbe"/>
+                            <constraint firstItem="fv2-aM-aXS" firstAttribute="top" secondItem="v25-Iy-ykv" secondAttribute="bottom" constant="20" id="pWL-ra-za8"/>
+                            <constraint firstItem="v25-Iy-ykv" firstAttribute="leading" secondItem="pPC-6D-ZuK" secondAttribute="leading" constant="20" id="sgQ-vt-N30"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="pPC-6D-ZuK"/>
+                    </view>
+                    <connections>
+                        <outlet property="barChart" destination="v25-Iy-ykv" id="Or6-HP-hU7"/>
+                        <outlet property="btnClose" destination="fv2-aM-aXS" id="8L2-Hj-ain"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cvM-VV-w4v" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1613.0434782608697" y="114.50892857142857"/>
         </scene>
     </scenes>
     <resources>

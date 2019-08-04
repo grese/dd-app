@@ -48,3 +48,13 @@ class Event {
         self.eventType = eventType
     }
 }
+
+class EventChartData {
+    let weekDate: Date
+    let eventCount: Int
+    
+    init(weekDate: Date, eventCount: Int) {
+        self.weekDate = weekDate
+        self.eventCount = eventCount
+    }
+}

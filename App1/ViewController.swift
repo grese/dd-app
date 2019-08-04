@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Charts
 
 class ViewController: UIViewController, AppStateDelegate {
     
@@ -15,10 +16,12 @@ class ViewController: UIViewController, AppStateDelegate {
     @IBOutlet weak var gotItButton: UIButton!
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var statusImage: UIImageView!
+    @IBOutlet weak var viewAnalyticsButton: UIButton!
     
     @IBAction func gotItButtonTapped(_ sender: UIButton!) {
         // TODO: send message over bluetooth to device to clear state.
     }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +43,7 @@ class ViewController: UIViewController, AppStateDelegate {
         }
         
     }
+    
 
 }
 
