@@ -11,6 +11,7 @@ import Foundation
 class Account {
     var user: User
     var devices: Array<Device>
+    var notificationsAllowed: Bool = false
 
     init(user: User, devices: Array<Device>) {
         self.user = user

@@ -36,7 +36,8 @@ class APIClient {
         }
     }
 
-    func saveEvents(events: Array<Event>, device: Device, completion: ((_ success: Bool) -> Void)?) {
+    func saveEvents(events: Array<Event>, deviceID: String, completion: ((_ success: Bool) -> Void)?) {
+        guard let device = AppState.shared.getDeviceById(deviceID) else { return }
         // Generate concurrent API calls for all events.
         let dispatchGroup = DispatchGroup()
         var statuses: Array<Bool> = []
@@ -52,6 +53,8 @@ class APIClient {
             self.request(url: deviceEventURL, method: HTTPMethods.post, data: eventJSON) {response, success in
                 if !success {
                     print("Error saving event: ", response ?? "")
+                } else {
+                    event.isSaved = true
                 }
                 DispatchQueue.main.async {
                     // Resolve async request & save status
@@ -79,7 +82,7 @@ class APIClient {
             // Start async block.
             dispatchGroup.enter()
             // Format JSON body for sensordata request
-            let sensorData = SensorDataJSONAPI(dataId: data.dataId, timestamp: data.timestamp, temperature: data.temperature, humidity: data.humidity)
+            let sensorData = SensorDataJSONAPI(dataId: data.dataId, deviceId: deviceID, timestamp: data.timestamp, temperature: data.temperature, humidity: data.humidity)
             let jsonData:Data? = try? JSONEncoder().encode(sensorData)
 
             // Create POST request to save sensor data.

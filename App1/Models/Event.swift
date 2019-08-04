@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UserNotifications
 
 // JSON format for API
 struct EventDataJSONAPI: Codable {
@@ -19,11 +20,11 @@ struct EventDataJSONAPI: Codable {
 // JSON format for bluetooth
 struct EventDataJSONBT: Codable {
     let event_id: String
-    let timestamp: String
+    let timestamp: Int
     let event_type: Int
 }
 struct EventDataJSONBTResponse: Codable {
-    let event: EventDataJSONBT
+    let event: EventDataJSONBT?
     let remaining: Int
 }
 // Event types
@@ -40,12 +41,39 @@ class Event {
     let timestamp: String
     let eventType: EventType
     var isSaved = false
+    var isCleared = false
+    var isNotified = false
 
     init(eventId: String, deviceId: String, timestamp: String, eventType: EventType) {
         self.eventId = eventId
         self.deviceId = deviceId
         self.timestamp = timestamp
         self.eventType = eventType
+    }
+
+    func clear() {
+        isCleared = true
+    }
+
+    func notify() {
+        guard let device = AppState.shared.getDeviceById(deviceId) else { return }
+        let content = UNMutableNotificationContent()
+
+        content.title = "Diaper Detective"
+        content.subtitle = "\(device.name) needs your attention"
+        content.body = "\(device.name)'s diaper triggered an alert at \(timestamp)."
+        content.sound = UNNotificationSound.default
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval:10, repeats: false)
+        let request = UNNotificationRequest(identifier: "dd_event_notif=\(eventId)", content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if error != nil {
+                print("notification error \(String(describing: error))")
+            } else {
+                self.isNotified = true
+            }
+        }
     }
 }
 

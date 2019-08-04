@@ -19,12 +19,13 @@ class Device {
     let name: String
     let status: DeviceStatus
     var events: Array<Event> = []
+    var unsavedSensorData: Array<SensorData> = []
 
     init(dbId: Int, deviceId: String, name: String, status: DeviceStatus, events: Array<Event> = []) {
         self.deviceId = deviceId
         self.dbId = dbId
         self.name = name
         self.status = status
-        self.events = []
+        self.events = events
     }
 }
