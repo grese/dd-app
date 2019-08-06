@@ -11,6 +11,7 @@ import Foundation
 // JSON format for API
 struct SensorDataJSONAPI: Codable {
     let dataId: String
+    let deviceId: String
     let timestamp: String
     let temperature: Float
     let humidity: Float

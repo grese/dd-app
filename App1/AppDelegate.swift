@@ -7,18 +7,26 @@
 //
 
 import UIKit
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, BluetoothClientDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
 
+    func requestNotificationAuthorization() {
+        let center =  UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { (result, error) in
+            AppState.shared.updateNotificationsAllowed(allowed: result)
+        }
+    }
+
+    // MARK: UIApplicationDelegate
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Restore AppState from filesystem.
         AppState.shared.restore()
-        // Setup the bluetooth client's delegate
-        BluetoothClient.shared.delegate = self
+        requestNotificationAuthorization()
         return true
     }
 
@@ -45,15 +53,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, BluetoothClientDelegate {
         AppState.shared.save()
     }
 
-    // MARK: BluetoothClientDelegate
+    // MARK: UNUserNotificationCenterDelegate
 
-    func didReceiveEvents(_ events: Array<Event>) {
-        AppState.shared.addEvents(events)
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        print("DID RECEIVE NOTIFICATION RESPONSE: ", response)
+        completionHandler()
     }
 
-    func didSyncSensorData(_ data: Array<SensorData>) {
-        // TODO: Handle receiving of sensor data.  We may decide to save these in the back-end.
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        print("WILL PRESENT NOTIFICATION: ", notification)
+        completionHandler([.alert, .sound, .badge])
     }
-
 }
 

@@ -8,10 +8,11 @@
 
 import Foundation
 
-// A simple singleton object used to store the current
-// state of the application.  Note that it is stored in
-// a JSON file in the filesystem just for demo purposes.
-// CoreData should be used in the long-run to persist data.
+// Defining a couple globals:
+struct Globals {
+    static var demoUserId = "ead003f4-83c1-483d-b40b-76574303f96e"
+    static var demoDeviceId = "4AB3DAF7-78EE-6E92-6E73-A7ED1B3C4F9C"
+}
 
 // JSON codables for the AppState (JSON file saved to filesystem)
 struct EventJSON: Codable {
@@ -37,37 +38,75 @@ struct AccountJSON: Codable {
     var devices: Array<DeviceJSON>
 }
 
-protocol AppStateDelegate {
-    func didRecordEvent(event: Event)
+// AppStateDelegate protocol.
+protocol AppStateDelegate: class {
+    func didRecordEvents()
 }
 
+// A simple singleton object used to store the current
+// state of the application.  Note that it is stored in
+// a JSON file in the filesystem just for demo purposes.
+// CoreData should be used in the long-run to persist data.
 class AppState {
     // Create a shared sington instance.
     static var shared = AppState()
-
-    var delegate: AppStateDelegate?
+    let notificationCenter: NotificationCenter = NotificationCenter.default
+    weak var delegate: AppStateDelegate?
     var account: Account?
     var accountReady: Bool {
         return account != nil
+    }
+    var notificationsAllowed: Bool {
+        return account?.notificationsAllowed ?? false
     }
 
     private var fileName:String = "dd-app-state.json"
     private var writeInProgress = false
     private var readInProgress = false
 
-    func addEvents(_ events: Array<Event>, autoSave: Bool = true) {
-        // Add the events to the app state.
-        for e in events {
-            addEvent(e, autoSave: false)
+    func getActiveEvent(deviceId: String) -> Event? {
+        if let device = getDeviceById(deviceId) {
+            // Find first event that is not "changed" and has not yet been cleared.
+            return device.events.first(where: { $0.eventType != .changed && !$0.isCleared })
+        }
+        return nil
+    }
+
+    func updateNotificationsAllowed(allowed: Bool) {
+        if let account = account, allowed != account.notificationsAllowed {
+            account.notificationsAllowed = allowed
+            save()
+        }
+    }
+
+    func getDeviceById(_ deviceId: String) -> Device? {
+        return account?.devices.first(where: { $0.deviceId == deviceId })
+    }
+
+    func addSensorData(_ data: Array<SensorData>, deviceId: String, autoSave: Bool = true) {
+        if let device = getDeviceById(deviceId) {
+            device.unsavedSensorData.append(contentsOf: data)
         }
         if autoSave {
             save()
         }
     }
 
-    func addEvent(_ event: Event, autoSave: Bool = true) {
-        if let device = account?.devices.first(where: { $0.deviceId == event.deviceId }) {
+    func addEvents(_ events: Array<Event>, deviceId: String, autoSave: Bool = true) {
+        // Add the events to the app state.
+        if let device = getDeviceById(deviceId) {
+            device.events.append(contentsOf: events)
+            delegate?.didRecordEvents()
+        }
+        if autoSave {
+            save()
+        }
+    }
+
+    func addEvent(_ event: Event, deviceId: String, autoSave: Bool = true) {
+        if let device = getDeviceById(deviceId) {
             device.events.append(event)
+            delegate?.didRecordEvents()
         }
         if autoSave {
             save()
@@ -117,17 +156,15 @@ class AppState {
             return
         }
         writeInProgress = true
-        // Move JSON parsing and writing to background thread.
-        DispatchQueue.global(qos: .background).async {
-            if let account = self.account, let accountData = self.accountToJSON(account), let fileURL = self.getFileURL() {
-                do {
-                    try accountData.write(to: fileURL)
-                } catch {
-                    print("Error occurred while persisting account JSON file")
-                }
+
+        if let account = account, let accountData = accountToJSON(account), let fileURL = getFileURL() {
+            do {
+                try accountData.write(to: fileURL)
+            } catch {
+                print("Error occurred while persisting account JSON file")
             }
-            self.writeInProgress = false
         }
+        writeInProgress = false
     }
 
     // Reads the state from filesystem.
@@ -138,17 +175,14 @@ class AppState {
         }
         readInProgress = true
         // Move JSON reading and parsing to background thread.
-        DispatchQueue.global(qos: .background).async {
-            if let fileURL = self.getFileURL() {
-                if let jsonData = try? Data(contentsOf: fileURL),
-                    let account = self.accountFromJSON(jsonData) {
-                    self.account = account
-                } else {
-                    print("Error occurred while reading account JSON file")
-                }
+        if let fileURL = getFileURL() {
+            if let jsonData = try? Data(contentsOf: fileURL) {
+                account = accountFromJSON(jsonData)
+            } else {
+                print("Error occurred while reading account JSON file")
             }
-            self.readInProgress = false
         }
+        readInProgress = false
     }
 
     private func accountToJSON(_ account: Account) -> Data? {
@@ -203,11 +237,38 @@ class AppState {
 
     // Generates a demo account (for iot-stripes demo)
     private func generateDemoAccount() -> Account {
-        let demoUser = User(dbId: 5, userId: "ead003f4-83c1-483d-b40b-76574303f96e", name: "Demo User", email: "iot-stripes-demo@cmu.edu")
-        let demoDevice = Device(dbId: 3, deviceId: "26130984-4221-4008-8402-01008040a050", name: "El Baby", status: .connected)
+        let demoUser = User(dbId: 5, userId: Globals.demoUserId, name: "Demo User", email: "iot-stripes-demo@cmu.edu")
+        let demoDevice = Device(dbId: 3, deviceId: Globals.demoDeviceId, name: "El Baby", status: .connected)
         return Account(user: demoUser, devices: [demoDevice])
     }
 
+    func addInternalNotificationObservers() {
+        // Setup observers for notifications triggered by bluetooth client.
+        notificationCenter.addObserver(self, selector: #selector(didReceiveEvents), name: .didReceiveEvents, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(didSyncSensorData), name: .didSyncSensorData, object: nil)
+    }
+
+    @objc private func didReceiveEvents(_ notification: Notification) {
+        if let userInfo = notification.userInfo, let deviceId:String = userInfo["deviceId"] as? String, let events:Array<Event> = userInfo["events"] as? Array<Event> {
+            for e in events {
+                if e.eventType != .changed {
+                    e.notify()
+                }
+            }
+            addEvents(events, deviceId: deviceId)
+            APIClient.shared.saveEvents(events: events, deviceID: deviceId, completion: nil)
+        }
+    }
+
+    @objc private func didSyncSensorData(_ notification: Notification) {
+        if let userInfo = notification.userInfo, let deviceId:String = userInfo["deviceId"] as? String, let data:Array<SensorData> = userInfo["data"] as? Array<SensorData> {
+            addSensorData(data, deviceId: deviceId)
+            // When API supports sensor data, we can save it in back-end
+        }
+    }
+
     // Private initializer to enorce singleton.
-    private init() {}
+    private init() {
+        addInternalNotificationObservers()
+    }
 }

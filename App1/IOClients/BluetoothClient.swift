@@ -4,12 +4,15 @@ import CoreBluetooth
 let deviceNamePrefix = "dd-device-"
 let eventNotificationPrefix = "new_event="
 // Device Services:
+let btSetupServiceId = CBUUID(string: "5b2d96cb-6532-494c-a693-49249249a4d2")
 let btPairServiceId = CBUUID(string: "0c060381-c0e0-4078-bcde-6fb7dbed763b")
 let btUnpairServiceId = CBUUID(string: "d66b351a-0d06-4341-a050-a854aa552a95")
 let btDataServiceId = CBUUID(string: "9dce6733-198c-46e3-b138-9cce67b3d96c")
 let btEventServiceId = CBUUID(string: "48241209-0402-41c0-a070-389cce673399")
 let btEventNotifyServiceId = CBUUID(string: "77e90f18-69ae-4283-bf53-f940e4588afa")
+let btEventClearedServiceId = CBUUID(string: "8b30ec19-6368-4920-939b-80c8cd24b3b0")
 let supportedServices = [
+    btSetupServiceId,
     btPairServiceId,
     btUnpairServiceId,
     btDataServiceId,
@@ -17,26 +20,34 @@ let supportedServices = [
     btEventNotifyServiceId
 ]
 // Device Characteristics:
+let btSetupCharacteristicId = CBUUID(string: "2e97cbe5-f2f9-4c3e-9f0f-0783c1603018")
 let btPairCharacteristicId = CBUUID(string: "369bcde6-73b9-4cae-97eb-753a9dcee773")
 let btUnpairCharacteristicId = CBUUID(string: "b95caed7-eb75-4a9d-8e67-b359acd6eb75")
 let btDataCharacteristicId = CBUUID(string: "cae57239-9c4e-4793-89e4-72b9dc6e379b")
 let btEventCharacteristicId = CBUUID(string: "6db65bad-d66b-45da-adf6-7bbd5eaf57ab")
 let btEventNotifyCharacteristicId = CBUUID(string: "a647940e-ebc1-4bd4-b273-a600929476cd")
+let btEventClearedCharacteristicId = CBUUID(string: "ee7a4fc7-6305-48e1-92e9-7c1c9be13b63")
 let supportedCharacteristics = [
+    btSetupCharacteristicId,
     btPairCharacteristicId,
     btUnpairCharacteristicId,
     btDataCharacteristicId,
     btEventCharacteristicId,
-    btEventNotifyCharacteristicId
+    btEventNotifyCharacteristicId,
+    btEventClearedCharacteristicId
 ]
 
-protocol BluetoothClientDelegate {
-    func didSyncSensorData(_ data: Array<SensorData>)
-    func didReceiveEvents(_ data: Array<Event>)
+extension Notification.Name {
+    static var didSyncSensorData: Notification.Name {
+        return .init(rawValue: "BluetoothClient.didSyncSensorData")
+    }
+    static var didReceiveEvents: Notification.Name {
+        return .init(rawValue: "BluetoothClient.didSyncEvents")
+    }
+    static var deviceConnectionStatusChanged: Notification.Name {
+        return .init(rawValue: "BluetoothClient.deviceConnectionStatusChanged")
+    }
 }
-
-// ID of demo device (this will be pre-paired for the demo.)
-let demoPeripheralID = "6C9419F4-5C72-4E63-91B0-30C859CDF558"
 
 class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     // Singleton instance of BluetoothClient
@@ -44,8 +55,9 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
 
     var centralManager: CBCentralManager?
     var btDevices: Dictionary<String, BluetoothDevice> = [:]
-    var btPairedPeripheralIDs: Set<String> = [demoPeripheralID]
-    var delegate: BluetoothClientDelegate?
+    var btPairedPeripheralIDs: Set<String> = [Globals.demoDeviceId]
+
+    private let notificationCenter: NotificationCenter = .default
 
     // private because there can be only ONE! ;)
     private override init() {
@@ -55,9 +67,34 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
             queue: DispatchQueue(label: "com.dd-app.centralQueue", attributes: .concurrent)
         )
     }
+
+    func setDeviceTimestamp(peripheralUUID: String) {
+        if let device = getDeviceByUUID(peripheralUUID: peripheralUUID),
+           let service = device.findServiceByUUID(serviceUUID: btSetupServiceId.uuidString),
+           let characteristic = device.findCharacteristicByUUID(service: service, characteristicUUID: btSetupCharacteristicId.uuidString),
+           let peripheral = device.peripheral {
+            let data:Data = "setup_time=\(Utils.getTimestampComponentString())".data(using: .utf8) ?? Data()
+            peripheral.writeValue(data, for: characteristic, type: .withResponse)
+        }
+    }
+
+    func clearEvent(peripheralUUID: String, eventId: String) -> Bool {
+        if let device: BluetoothDevice = getDeviceByUUID(peripheralUUID: peripheralUUID),
+           let service = device.findServiceByUUID(serviceUUID: btEventServiceId.uuidString),
+           let characteristic = device.findCharacteristicByUUID(service: service, characteristicUUID: btEventClearedCharacteristicId.uuidString),
+           let peripheral = device.peripheral {
+
+            let data:Data = "event_cleared=\(eventId)".data(using: .utf8) ?? Data()
+            peripheral.writeValue(data, for: characteristic, type: .withResponse)
+
+            return true
+
+        }
+        return false
+    }
     
     func isDeviceConnected(peripheralUUID: String) -> Bool {
-        if let device: BluetoothDevice  = self.getDeviceByUUID(peripheralUUID: peripheralUUID) {
+        if let device: BluetoothDevice = getDeviceByUUID(peripheralUUID: peripheralUUID) {
             return device.isReady
         }
         return false
@@ -134,6 +171,7 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
             btDevices[pUUID] = BluetoothDevice(peripheral)
         }
 
+
         // If the device is currently disconnected, and already paired, connect it.
         if peripheral.state == .disconnected &&
             btPairedPeripheralIDs.contains(pUUID) {
@@ -179,6 +217,8 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
         if btDevices[pUUID] != nil {
             btDevices.removeValue(forKey: pUUID)
             print("Peripheral disconnected.", pUUID)
+            notificationCenter.post(name: .deviceConnectionStatusChanged, object: nil, userInfo: ["deviceId": pUUID])
+            startScanning()
         }
     }
 
@@ -230,6 +270,11 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
             if characteristic.uuid.uuidString == btEventNotifyCharacteristicId.uuidString {
                 peripheral.setNotifyValue(true, for: characteristic)
             }
+
+            // Setup the device's timestamp:
+            if characteristic.uuid.uuidString == btSetupCharacteristicId.uuidString {
+                setDeviceTimestamp(peripheralUUID: pUUID)
+            }
         }
     }
 
@@ -254,15 +299,19 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
 
             if let result = parseEventResponse(data: value), let device = getDeviceByUUID(peripheralUUID: peripheral.identifier.uuidString) {
 
-                let event = Event(eventId: result.event.event_id, deviceId: device.deviceId, timestamp: result.event.timestamp, eventType: .one)
-                device.syncEventsItems.append(event)
+                if let e = result.event {
+                    let eventDate = Date(timeIntervalSince1970: TimeInterval(e.timestamp))
+                    let timestamp = Utils.ISO8601StringFromDate(date: eventDate)
+                    let event = Event(eventId: e.event_id, deviceId: device.deviceId, timestamp: timestamp, eventType: EventType(rawValue: e.event_type)!)
+                    device.syncEventsItems.append(event)
+                }
 
                 if result.remaining > 0 {
                     print("Reading next event...")
                     peripheral.readValue(for: characteristic)
                 } else {
                     // Pass sensor data to delegate.
-                    delegate?.didReceiveEvents(device.syncEventsItems)
+                    notificationCenter.post(name: .didReceiveEvents, object: nil, userInfo: ["deviceId": device.deviceId, "events": device.syncEventsItems])
                     // Reset the device's sync state
                     device.syncEventsInProgress = false
                     device.syncEventsItems = []
@@ -284,7 +333,7 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
                 } else {
                     print("Sync complete.")
                     // Pass sensor data to delegate.
-                    delegate?.didSyncSensorData(device.syncDataItems)
+                    notificationCenter.post(name: .didSyncSensorData, object: nil, userInfo: ["deviceId": device.deviceId, "data": device.syncDataItems])
                     // Reset the device's sync state
                     device.syncDataInProgress = false
                     device.syncDataItems = []
