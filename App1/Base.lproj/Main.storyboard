@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="pZt-Gh-wCO">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="pZt-Gh-wCO">
     <device id="retina6_1" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -21,29 +21,29 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Settings_black-512" translatesAutoresizingMaskIntoConstraints="NO" id="iIp-G8-g3g">
                                 <rect key="frame" x="344" y="65" width="50" height="37"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="37" id="3FL-KF-lWV"/>
-                                    <constraint firstAttribute="width" constant="50" id="6lq-SH-1Qh"/>
+                                    <constraint firstAttribute="width" constant="50" id="6t3-YO-215"/>
+                                    <constraint firstAttribute="height" constant="37" id="Hyh-ZD-MdQ"/>
                                 </constraints>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="10020-smiling-face-icon" translatesAutoresizingMaskIntoConstraints="NO" id="3sH-54-9x7">
-                                <rect key="frame" x="82" y="202" width="251" height="268"/>
+                                <rect key="frame" x="81.5" y="319" width="251" height="268"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
                                 </accessibility>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="268" id="hGi-JU-q5m"/>
-                                    <constraint firstAttribute="width" constant="251" id="hXz-aD-Zj7"/>
+                                    <constraint firstAttribute="height" constant="268" id="LoT-tv-boS"/>
+                                    <constraint firstAttribute="width" constant="251" id="i3c-kp-op0"/>
                                 </constraints>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bluetooth-logo-2" translatesAutoresizingMaskIntoConstraints="NO" id="rkG-Qo-ehI">
                                 <rect key="frame" x="33" y="65" width="45" height="46"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="46" id="X0s-hk-kNN"/>
-                                    <constraint firstAttribute="width" constant="45" id="Yw5-ie-zbb"/>
+                                    <constraint firstAttribute="width" constant="45" id="Mae-70-0ZR"/>
+                                    <constraint firstAttribute="height" constant="46" id="qD8-M5-dgX"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Baby is Fresh and Dry " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r1j-7Z-x4V">
-                                <rect key="frame" x="20" y="515" width="374" height="21"/>
+                                <rect key="frame" x="121.5" y="595" width="171" height="21"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" notEnabled="YES"/>
                                 </accessibility>
@@ -52,16 +52,17 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IZm-DU-jRX">
-                                <rect key="frame" x="20" y="611" width="374" height="30"/>
-                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <rect key="frame" x="20" y="647" width="374" height="35"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" title="I've Got This! "/>
                                 <connections>
                                     <action selector="gotItButtonTapped:" destination="pZt-Gh-wCO" eventType="touchUpInside" id="NKj-ib-Ttp"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2og-Xj-WBz">
-                                <rect key="frame" x="157" y="691" width="100" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2og-Xj-WBz">
+                                <rect key="frame" x="20" y="708" width="374" height="30"/>
                                 <state key="normal" title="View Analytics"/>
                                 <connections>
                                     <segue destination="tCu-rq-3xe" kind="presentation" id="4kq-fF-yvu"/>
@@ -70,20 +71,20 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="hke-2Z-FVT" firstAttribute="trailing" secondItem="r1j-7Z-x4V" secondAttribute="trailing" constant="20" id="0YF-w5-pK2"/>
-                            <constraint firstItem="rkG-Qo-ehI" firstAttribute="leading" secondItem="hke-2Z-FVT" secondAttribute="leading" constant="33" id="0ct-Vr-izc"/>
-                            <constraint firstItem="r1j-7Z-x4V" firstAttribute="top" secondItem="3sH-54-9x7" secondAttribute="bottom" constant="45" id="42d-kB-5Dh"/>
-                            <constraint firstItem="3sH-54-9x7" firstAttribute="top" secondItem="hke-2Z-FVT" secondAttribute="top" constant="158" id="5yG-e9-NOt"/>
-                            <constraint firstItem="iIp-G8-g3g" firstAttribute="top" secondItem="hke-2Z-FVT" secondAttribute="top" constant="21" id="9Dp-s5-OwR"/>
-                            <constraint firstItem="3sH-54-9x7" firstAttribute="leading" secondItem="hke-2Z-FVT" secondAttribute="leading" constant="82" id="GGn-KB-33k"/>
-                            <constraint firstItem="IZm-DU-jRX" firstAttribute="leading" secondItem="hke-2Z-FVT" secondAttribute="leading" constant="20" id="IQe-8E-ZzH"/>
-                            <constraint firstItem="r1j-7Z-x4V" firstAttribute="leading" secondItem="hke-2Z-FVT" secondAttribute="leading" constant="20" id="Kw8-IJ-aaX"/>
-                            <constraint firstItem="iIp-G8-g3g" firstAttribute="leading" secondItem="rkG-Qo-ehI" secondAttribute="trailing" constant="266" id="LjI-DE-E8q"/>
-                            <constraint firstItem="IZm-DU-jRX" firstAttribute="top" secondItem="r1j-7Z-x4V" secondAttribute="bottom" constant="75" id="WsH-ur-zfG"/>
-                            <constraint firstItem="hke-2Z-FVT" firstAttribute="trailing" secondItem="IZm-DU-jRX" secondAttribute="trailing" constant="20" id="rEY-Ld-NOP"/>
-                            <constraint firstItem="rkG-Qo-ehI" firstAttribute="top" secondItem="hke-2Z-FVT" secondAttribute="top" constant="21" id="tWL-mt-73r"/>
-                            <constraint firstItem="hke-2Z-FVT" firstAttribute="trailing" secondItem="3sH-54-9x7" secondAttribute="trailing" constant="81" id="wSH-an-PLg"/>
-                            <constraint firstItem="hke-2Z-FVT" firstAttribute="trailing" secondItem="iIp-G8-g3g" secondAttribute="trailing" constant="20" id="xsF-fc-q4l"/>
+                            <constraint firstItem="rkG-Qo-ehI" firstAttribute="leading" secondItem="hke-2Z-FVT" secondAttribute="leading" constant="33" id="3tU-7r-T6E"/>
+                            <constraint firstItem="3sH-54-9x7" firstAttribute="centerX" secondItem="hke-2Z-FVT" secondAttribute="centerX" id="4Eu-0l-4Rp"/>
+                            <constraint firstItem="hke-2Z-FVT" firstAttribute="trailing" secondItem="iIp-G8-g3g" secondAttribute="trailing" constant="20" id="7A6-G4-g50"/>
+                            <constraint firstItem="IZm-DU-jRX" firstAttribute="top" secondItem="r1j-7Z-x4V" secondAttribute="bottom" constant="31" id="EDk-M1-e7n"/>
+                            <constraint firstItem="r1j-7Z-x4V" firstAttribute="centerX" secondItem="hke-2Z-FVT" secondAttribute="centerX" id="MAg-9c-ps9"/>
+                            <constraint firstItem="hke-2Z-FVT" firstAttribute="trailing" secondItem="IZm-DU-jRX" secondAttribute="trailing" constant="20" id="OT4-tN-pgg"/>
+                            <constraint firstItem="2og-Xj-WBz" firstAttribute="leading" secondItem="hke-2Z-FVT" secondAttribute="leading" constant="20" id="R7h-we-Qbv"/>
+                            <constraint firstItem="r1j-7Z-x4V" firstAttribute="top" secondItem="3sH-54-9x7" secondAttribute="bottom" constant="8" id="TZM-wv-hfz"/>
+                            <constraint firstItem="IZm-DU-jRX" firstAttribute="leading" secondItem="hke-2Z-FVT" secondAttribute="leading" constant="20" id="U0m-7c-SkT"/>
+                            <constraint firstItem="iIp-G8-g3g" firstAttribute="top" secondItem="hke-2Z-FVT" secondAttribute="top" constant="21" id="YrK-Vy-GAH"/>
+                            <constraint firstItem="2og-Xj-WBz" firstAttribute="top" secondItem="IZm-DU-jRX" secondAttribute="bottom" constant="26" id="aeL-1i-9hm"/>
+                            <constraint firstItem="3sH-54-9x7" firstAttribute="centerY" secondItem="hke-2Z-FVT" secondAttribute="centerY" id="g1Z-dO-1Jf"/>
+                            <constraint firstItem="hke-2Z-FVT" firstAttribute="trailing" secondItem="2og-Xj-WBz" secondAttribute="trailing" constant="20" id="kX0-9Z-cvK"/>
+                            <constraint firstItem="rkG-Qo-ehI" firstAttribute="top" secondItem="hke-2Z-FVT" secondAttribute="top" constant="21" id="pW0-bN-pbZ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="hke-2Z-FVT"/>
                     </view>

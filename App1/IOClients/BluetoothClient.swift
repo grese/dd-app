@@ -64,7 +64,7 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
         super.init()
         centralManager = CBCentralManager(
             delegate: self,
-            queue: DispatchQueue(label: "com.dd-app.centralQueue", attributes: .concurrent)
+            queue: nil
         )
     }
 
@@ -79,18 +79,31 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
     }
 
     func clearEvent(peripheralUUID: String, eventId: String) -> Bool {
-        if let device: BluetoothDevice = getDeviceByUUID(peripheralUUID: peripheralUUID),
-           let service = device.findServiceByUUID(serviceUUID: btEventServiceId.uuidString),
-           let characteristic = device.findCharacteristicByUUID(service: service, characteristicUUID: btEventClearedCharacteristicId.uuidString),
-           let peripheral = device.peripheral {
-
-            let data:Data = "event_cleared=\(eventId)".data(using: .utf8) ?? Data()
-            peripheral.writeValue(data, for: characteristic, type: .withResponse)
-
-            return true
-
-        }
-        return false
+        let device: BluetoothDevice? = getDeviceByUUID(peripheralUUID: peripheralUUID)
+        let service = device?.findServiceByUUID(serviceUUID: btEventServiceId.uuidString)
+        let characteristic = device?.findCharacteristicByUUID(service: service!, characteristicUUID: btEventClearedCharacteristicId.uuidString)
+        let data:Data = "event_cleared=\(eventId)".data(using: .utf8) ?? Data()
+        let perip = device?.peripheral
+        
+        perip!.writeValue(data, for: characteristic!, type: .withResponse)
+        return true
+        
+        
+        
+        
+//        let peripheral = device.peripheral
+//        if let device: BluetoothDevice = getDeviceByUUID(peripheralUUID: peripheralUUID),
+//           let service = device.findServiceByUUID(serviceUUID: btEventServiceId.uuidString),
+//           let characteristic = device.findCharacteristicByUUID(service: service, characteristicUUID: btEventClearedCharacteristicId.uuidString),
+//           let peripheral = device.peripheral {
+//
+//            let data:Data = "event_cleared=\(eventId)".data(using: .utf8) ?? Data()
+//            peripheral.writeValue(data, for: characteristic, type: .withResponse)
+//
+//            return true
+//
+//        }
+//        return false
     }
     
     func isDeviceConnected(peripheralUUID: String) -> Bool {

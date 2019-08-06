@@ -82,6 +82,7 @@
 				6A35513322EAA8CF007CD0E0 /* Products */,
 				069ACF49FE067DBB9D96F8A6 /* Pods */,
 				B86EE5C1C696FEB09AD8BB4F /* Frameworks */,
+				6A70854A22F90F65006E0AE5 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -111,6 +112,15 @@
 			path = App1;
 			sourceTree = "<group>";
 		};
+		6A70854A22F90F65006E0AE5 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				7D530AFD22F62999005ED0B0 /* UserNotifications.framework */,
+				7D530AFE22F62999005ED0B0 /* UserNotificationsUI.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		7D10F20722F3C39D00CCA54F /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -121,15 +131,6 @@
 				7DBC57C922F404F50052FFF3 /* Account.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		7D530AFC22F62998005ED0B0 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				7D530AFD22F62999005ED0B0 /* UserNotifications.framework */,
-				7D530AFE22F62999005ED0B0 /* UserNotificationsUI.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		7DA0112422ECD53C00CDE5E6 /* IOClients */ = {
@@ -426,14 +427,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LPUMBS5SCC;
+				DEVELOPMENT_TEAM = ZRM7A3753G;
 				INFOPLIST_FILE = App1/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.iot-stripes.App1";
+				PRODUCT_BUNDLE_IDENTIFIER = com.saracassidy1.App1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -448,14 +449,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LPUMBS5SCC;
+				DEVELOPMENT_TEAM = ZRM7A3753G;
 				INFOPLIST_FILE = App1/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.iot-stripes.App1";
+				PRODUCT_BUNDLE_IDENTIFIER = com.saracassidy1.App1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

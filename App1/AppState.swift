@@ -11,7 +11,8 @@ import Foundation
 // Defining a couple globals:
 struct Globals {
     static var demoUserId = "ead003f4-83c1-483d-b40b-76574303f96e"
-    static var demoDeviceId = "4AB3DAF7-78EE-6E92-6E73-A7ED1B3C4F9C"
+//    static var demoDeviceId = "4AB3DAF7-78EE-6E92-6E73-A7ED1B3C4F9C"
+    static var demoDeviceId = "7B21B295-8EE5-984B-0364-01031B647628"
 }
 
 // JSON codables for the AppState (JSON file saved to filesystem)

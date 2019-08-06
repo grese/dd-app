@@ -27,15 +27,17 @@ class ViewController: UIViewController, AppStateDelegate {
     
     @IBAction func gotItButtonTapped(_ sender: UIButton) {
         if let deviceId = device?.deviceId, let event = AppState.shared.getActiveEvent(deviceId: deviceId) {
-            let eventCleared = BluetoothClient.shared.clearEvent(peripheralUUID: deviceId, eventId: event.eventId)
-
-            if eventCleared {
-                print("Event cleared.")
-                updateView()
-            } else {
-                // Bluetooth message was not sent successfully.
-                print("Event NOT cleared.")
-            }
+            BluetoothClient.shared.clearEvent(peripheralUUID: deviceId, eventId: event.eventId)
+            event.isCleared = true
+            
+            updateView()
+//            if eventCleared {
+//                print("Event cleared.")
+//                updateView()
+//            } else {
+//                // Bluetooth message was not sent successfully.
+//                print("Event NOT cleared.")
+//            }
         }
     }
     
@@ -86,16 +88,20 @@ class ViewController: UIViewController, AppStateDelegate {
         if let event = event {
             imageName = event.eventType != .changed ? sadImageName : happyImageName
         }
-        statusImage.image = UIImage(named: imageName)
+        DispatchQueue.main.async { // Correct
+            self.statusImage.image = UIImage(named: imageName)
+        }
     }
 
     func updateMessageLabel(_ event: Event?) {
-        let name = device?.name ?? ""
+        let name = device?.name ?? "Baby"
         var message = "\(name)'s diaper is all clear"
         if let event = event, event.eventType != .changed {
             message = "\(name) is waiting on you to change his diaper"
         }
-        messageLabel.text = message
+        DispatchQueue.main.async { // Correct
+            self.messageLabel.text = message
+        }
     }
 
     func updateButton(_ event: Event?) {
@@ -103,7 +109,9 @@ class ViewController: UIViewController, AppStateDelegate {
         if let event = event, event.eventType != .changed {
             enabled = true
         }
-        gotItButton.isEnabled = enabled
+        DispatchQueue.main.async { // Correct
+            self.gotItButton.isEnabled = enabled
+        }
     }
 
     func updateView() {
