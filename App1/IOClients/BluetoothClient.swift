@@ -78,32 +78,13 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
         }
     }
 
-    func clearEvent(peripheralUUID: String, eventId: String) -> Bool {
+    func clearEvent(peripheralUUID: String, eventId: String) {
         let device: BluetoothDevice? = getDeviceByUUID(peripheralUUID: peripheralUUID)
         let service = device?.findServiceByUUID(serviceUUID: btEventServiceId.uuidString)
         let characteristic = device?.findCharacteristicByUUID(service: service!, characteristicUUID: btEventClearedCharacteristicId.uuidString)
         let data:Data = "event_cleared=\(eventId)".data(using: .utf8) ?? Data()
-        let perip = device?.peripheral
-        
-        perip!.writeValue(data, for: characteristic!, type: .withResponse)
-        return true
-        
-        
-        
-        
-//        let peripheral = device.peripheral
-//        if let device: BluetoothDevice = getDeviceByUUID(peripheralUUID: peripheralUUID),
-//           let service = device.findServiceByUUID(serviceUUID: btEventServiceId.uuidString),
-//           let characteristic = device.findCharacteristicByUUID(service: service, characteristicUUID: btEventClearedCharacteristicId.uuidString),
-//           let peripheral = device.peripheral {
-//
-//            let data:Data = "event_cleared=\(eventId)".data(using: .utf8) ?? Data()
-//            peripheral.writeValue(data, for: characteristic, type: .withResponse)
-//
-//            return true
-//
-//        }
-//        return false
+
+        device?.peripheral?.writeValue(data, for: characteristic!, type: .withResponse)
     }
     
     func isDeviceConnected(peripheralUUID: String) -> Bool {
@@ -184,7 +165,6 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
             btDevices[pUUID] = BluetoothDevice(peripheral)
         }
 
-
         // If the device is currently disconnected, and already paired, connect it.
         if peripheral.state == .disconnected &&
             btPairedPeripheralIDs.contains(pUUID) {
@@ -218,6 +198,7 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
         // Peripheral Connected
         peripheral.delegate = self
         peripheral.discoverServices(nil)
+        notificationCenter.post(name: .deviceConnectionStatusChanged, object: nil, userInfo: ["deviceId": peripheral.identifier.uuidString])
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
@@ -261,6 +242,7 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
             print("Service is ready: ", service.uuid.uuidString)
             peripheral.discoverCharacteristics(nil, for: service)
         }
+        notificationCenter.post(name: .deviceConnectionStatusChanged, object: nil, userInfo: ["deviceId": pUUID])
     }
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
@@ -289,6 +271,7 @@ class BluetoothClient: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
                 setDeviceTimestamp(peripheralUUID: pUUID)
             }
         }
+        notificationCenter.post(name: .deviceConnectionStatusChanged, object: nil, userInfo: ["deviceId": pUUID])
     }
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {

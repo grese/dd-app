@@ -34,12 +34,12 @@ class AnalyticsViewController: UIViewController {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy/MM/dd"
         let events: [EventChartData] = [EventChartData(weekDate: formatter.date(from: "2019/08/01")!, eventCount: 30),
-                                        EventChartData(weekDate: formatter.date(from: "2019/08/02")!, eventCount: 35),
-                                        EventChartData(weekDate: formatter.date(from: "2019/08/03")!, eventCount: 31),
-                                        EventChartData(weekDate: formatter.date(from: "2019/08/04")!, eventCount: 28),
-                                        EventChartData(weekDate: formatter.date(from: "2019/08/05")!, eventCount: 36),
-                                        EventChartData(weekDate: formatter.date(from: "2019/08/06")!, eventCount: 30),
-                                        EventChartData(weekDate: formatter.date(from: "2019/08/07")!, eventCount: 26)]
+                                        EventChartData(weekDate: formatter.date(from: "2019/08/02")!, eventCount: 16),
+                                        EventChartData(weekDate: formatter.date(from: "2019/08/03")!, eventCount: 12),
+                                        EventChartData(weekDate: formatter.date(from: "2019/08/04")!, eventCount: 9),
+                                        EventChartData(weekDate: formatter.date(from: "2019/08/05")!, eventCount: 17),
+                                        EventChartData(weekDate: formatter.date(from: "2019/08/06")!, eventCount: 13),
+                                        EventChartData(weekDate: formatter.date(from: "2019/08/07")!, eventCount: 11)]
         let dataSet = BarChartDataSet()
         //dataSet.colors = [.yellow]
         dataSet.label = "Number of Events"

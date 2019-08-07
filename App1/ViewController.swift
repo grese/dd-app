@@ -28,20 +28,12 @@ class ViewController: UIViewController, AppStateDelegate {
     @IBAction func gotItButtonTapped(_ sender: UIButton) {
         if let deviceId = device?.deviceId, let event = AppState.shared.getActiveEvent(deviceId: deviceId) {
             BluetoothClient.shared.clearEvent(peripheralUUID: deviceId, eventId: event.eventId)
-            event.isCleared = true
+            AppState.shared.clearEvent(eventId: event.eventId, deviceId: deviceId)
             
             updateView()
-//            if eventCleared {
-//                print("Event cleared.")
-//                updateView()
-//            } else {
-//                // Bluetooth message was not sent successfully.
-//                print("Event NOT cleared.")
-//            }
         }
     }
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         // Setup observers for notifications triggered by bluetooth client.
@@ -61,7 +53,6 @@ class ViewController: UIViewController, AppStateDelegate {
     @objc private func bluetoothStatusDidUpdate(_ notification: Notification) {
         // Notifications are fired on background thread.  Must update UI in main thread.
         DispatchQueue.main.async { [weak self] in
-            print("BLUETOOTH CONNECTION STATUS UPDATED!")
             self?.updateView()
         }
     }
@@ -70,7 +61,6 @@ class ViewController: UIViewController, AppStateDelegate {
     @objc private func onEventReceived(_ notification: Notification) {
         // Notifications are fired on background thread.  Must update UI in main thread.
         DispatchQueue.main.async { [weak self] in
-            print("EVENT RECEIVED!")
             self?.updateView()
         }
     }
@@ -88,9 +78,7 @@ class ViewController: UIViewController, AppStateDelegate {
         if let event = event {
             imageName = event.eventType != .changed ? sadImageName : happyImageName
         }
-        DispatchQueue.main.async { // Correct
-            self.statusImage.image = UIImage(named: imageName)
-        }
+        self.statusImage.image = UIImage(named: imageName)
     }
 
     func updateMessageLabel(_ event: Event?) {
@@ -99,9 +87,7 @@ class ViewController: UIViewController, AppStateDelegate {
         if let event = event, event.eventType != .changed {
             message = "\(name) is waiting on you to change his diaper"
         }
-        DispatchQueue.main.async { // Correct
-            self.messageLabel.text = message
-        }
+        self.messageLabel.text = message
     }
 
     func updateButton(_ event: Event?) {
@@ -109,9 +95,7 @@ class ViewController: UIViewController, AppStateDelegate {
         if let event = event, event.eventType != .changed {
             enabled = true
         }
-        DispatchQueue.main.async { // Correct
-            self.gotItButton.isEnabled = enabled
-        }
+        self.gotItButton.isEnabled = enabled
     }
 
     func updateView() {
