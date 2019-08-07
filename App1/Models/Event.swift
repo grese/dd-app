@@ -44,11 +44,14 @@ class Event {
     var isCleared = false
     var isNotified = false
 
-    init(eventId: String, deviceId: String, timestamp: String, eventType: EventType) {
+    init(eventId: String, deviceId: String, timestamp: String, eventType: EventType, isSaved: Bool? = false, isCleared: Bool? = false, isNotified: Bool? = false) {
         self.eventId = eventId
         self.deviceId = deviceId
         self.timestamp = timestamp
         self.eventType = eventType
+        self.isSaved = isSaved ?? false
+        self.isCleared = isCleared ?? false
+        self.isNotified = isNotified ?? false
     }
 
     func clear() {
@@ -56,7 +59,10 @@ class Event {
     }
 
     func notify() {
-        guard let device = AppState.shared.getDeviceById(deviceId) else { return }
+        guard let device = AppState.shared.getDeviceById(deviceId) else {
+            print("NO NOTIFICATION!")
+            return
+        }
         let content = UNMutableNotificationContent()
 
         content.title = "Diaper Detective"
@@ -66,12 +72,14 @@ class Event {
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval:10, repeats: false)
         let request = UNNotificationRequest(identifier: "dd_event_notif=\(eventId)", content: content, trigger: trigger)
-
+        
+    
         UNUserNotificationCenter.current().add(request) { error in
             if error != nil {
                 print("notification error \(String(describing: error))")
             } else {
                 self.isNotified = true
+                AppState.shared.save()
             }
         }
     }

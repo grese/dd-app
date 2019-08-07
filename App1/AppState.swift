@@ -11,8 +11,9 @@ import Foundation
 // Defining a couple globals:
 struct Globals {
     static var demoUserId = "ead003f4-83c1-483d-b40b-76574303f96e"
+    static var demoDeviceId = "8B6C0307-669B-C31F-BEC1-0BF7D4D5843E"
 //    static var demoDeviceId = "4AB3DAF7-78EE-6E92-6E73-A7ED1B3C4F9C"
-    static var demoDeviceId = "7B21B295-8EE5-984B-0364-01031B647628"
+//    static var demoDeviceId = "7B21B295-8EE5-984B-0364-01031B647628"
 }
 
 // JSON codables for the AppState (JSON file saved to filesystem)
@@ -20,6 +21,9 @@ struct EventJSON: Codable {
     var uuid: String
     var timestamp: String
     var eventType: Int
+    var isSaved: Bool?
+    var isCleared: Bool?
+    var isNotified: Bool?
 }
 struct DeviceJSON: Codable {
     var id: Int
@@ -64,6 +68,13 @@ class AppState {
     private var fileName:String = "dd-app-state.json"
     private var writeInProgress = false
     private var readInProgress = false
+    
+    func clearEvent(eventId: String, deviceId: String) {
+        if let device = getDeviceById(deviceId), let event = device.events.first(where: { eventId == $0.eventId }) {
+            event.clear()
+            save()
+        }
+    }
 
     func getActiveEvent(deviceId: String) -> Event? {
         if let device = getDeviceById(deviceId) {
@@ -195,7 +206,7 @@ class AppState {
             var jsonEvents: Array<EventJSON> = []
 
             for e in d.events {
-                jsonEvents.append(EventJSON(uuid: e.eventId, timestamp: e.timestamp, eventType: e.eventType.rawValue))
+                jsonEvents.append(EventJSON(uuid: e.eventId, timestamp: e.timestamp, eventType: e.eventType.rawValue, isSaved: e.isSaved, isCleared: e.isCleared, isNotified: e.isNotified))
             }
 
             let jsonDevice: DeviceJSON = DeviceJSON(id: d.dbId, uuid: d.deviceId, name: d.name, status: d.status.rawValue, events: jsonEvents)
@@ -219,7 +230,7 @@ class AppState {
                 var events: Array<Event> = []
 
                 for eJSON in dJSON.events {
-                    events.append(Event(eventId: eJSON.uuid, deviceId: dJSON.uuid, timestamp: eJSON.timestamp, eventType: EventType(rawValue: eJSON.eventType)!))
+                    events.append(Event(eventId: eJSON.uuid, deviceId: dJSON.uuid, timestamp: eJSON.timestamp, eventType: EventType(rawValue: eJSON.eventType)!, isSaved: eJSON.isSaved, isCleared: eJSON.isCleared, isNotified: eJSON.isNotified))
                 }
                 devices.append(Device(dbId: dJSON.id, deviceId: dJSON.uuid, name: dJSON.name, status: DeviceStatus(rawValue: dJSON.status)!, events: events))
             }
